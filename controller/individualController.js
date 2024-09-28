@@ -7,8 +7,6 @@ require("dotenv").config()
 const sendmail = require("../helpers/nodemailer")
 const { signUpTemplate, verifyTemplate, forgotPasswordTemplate } = require("../helpers/html")
 
-
-
 exports.signUp = async (req, res) => {
     try {
         // Destructure fields from the request body
@@ -32,8 +30,6 @@ exports.signUp = async (req, res) => {
         if (existingPhoneIndividual || existingPhoneNpo) {
             return res.status(400).json({ message: 'Phone number already in use' });
         }
-
-
         // Handle file upload
         let profilePicUrl = null;
         if (req.file) {
@@ -45,10 +41,7 @@ exports.signUp = async (req, res) => {
             }
         }
        
-       
-
-
-        // Hash password
+       // Hash password
         const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password, salt);
 
@@ -125,24 +118,24 @@ exports.verifyEmail = async (req, res) => {
     }
 }
 exports.logIn = async (req, res) => {
-    try {
+    try { 
         const { email, password } = req.body
         if (!email || !password) {
             return res.status(400).json({ info: `log in must contain email and password` })
         } 
-        const lowerCase=email.toLowerCase()
+        const lowerCase = email.toLowerCase()
         let user
           user = await individualModel.findOne({email:lowerCase})
             if(!user){
-            user=await npoModel.findOne({email:lowerCase})
+            user = await npoModel.findOne({email:lowerCase})
             }
         if (!user) {
-            return res.status(401).json({ info: `user with email not found` })
+            return res.status(400).json({ message: `user with email not found` })
         }
-        const verifyPassword = await bcryptjs.compare(password, user.password)
+        const verifyPassword = await bcrypt.compare(password, user.password)
 
         if (!verifyPassword) {
-            return res.status(400).json({ info: `incorrect password` })
+            return res.status(400).json({ info: `incorrect password` }) 
         }
         if (!user.isVerified) {
             return res.status(400).json({ message: `please verify your email first` })
@@ -184,7 +177,6 @@ exports.resendVerificationEmail = async (req, res) => {
         res.status(500).json({ message: `unable to resend verification link because ${error}` })
     }
 }
-
 exports.forgetPassword = async (req, res) => {
     try {
 
@@ -203,13 +195,11 @@ exports.forgetPassword = async (req, res) => {
             html: forgotPasswordTemplate(forgotPasswordLink, user.firstName)
         }
         await sendmail(mailOptions)
-        res.status(200).json({ info: `forget password template sent successfully `, resetToken })
+        res.status(200).json({ info: `forget password template sent successfully`, resetToken })
     } catch (error) {
         res.status(500).json({ info: ` can not send forget password template because ${error} ` })
     }
 }
-
-
 exports.resetPassword = async (req, res) => {
     try {
         const { token } = req.params;
@@ -244,8 +234,6 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ info: `Unable to reset password because ${error.message}` });
     }
 };
-
-
 exports.changePassword = async (req, res) => {
     try {
         const { token } = req.params
@@ -273,7 +261,6 @@ exports.changePassword = async (req, res) => {
         res.status(500).json({ info: `unable to change password because ${error}` })
     }
 }
-
 exports.updatedindividual = async (req, res) => {
     try { 
         const { id } = req.params;
@@ -322,7 +309,6 @@ exports.updatedindividual = async (req, res) => {
         res.status(500).json({ message: `Error: ${error.message}` });
     }
 };
-   
 exports.logOut = async (req, res) => {
     try {
         const auth = req.headers.authorization;
@@ -357,7 +343,6 @@ exports.logOut = async (req, res) => {
         res.status(500).json({ info: `Unable to log-out because ${error}` });
     }
 };
-
 exports.getOne = async (req, res) => {
     try {
         const { id } = req.params

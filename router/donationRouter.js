@@ -1,6 +1,6 @@
-const express=require("express")
-const router=express.Router()
-const{ createDonation,getAllDonation,getDonationById,NpoManagement,trackDonationHistory}=require("../controller/donationController")
+const express = require("express")
+const router = express.Router()
+const{ createDonation,getAllDonation,getDonationById,NpoManagement,trackDonationHistory} = require("../controller/donationController")
 const { authenticate } = require("../middleware/auth")
 
 router.post("/donate/:campaignId",createDonation)

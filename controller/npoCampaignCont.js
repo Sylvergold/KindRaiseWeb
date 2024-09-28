@@ -12,13 +12,12 @@ const cloudinary=require("../utilis/cloudinary")
 const twoYearsFromNow = new Date();
 twoYearsFromNow.setFullYear(twoYearsFromNow.getFullYear() + 2);
 
-
 exports.createCampaignByNpo = async (req, res) => {
     try {
         const { title, subtitle, story, Goal, endDate, ev } = req.body;
         const npoId = req.user.id;
 
-        if (!title || !subtitle || !story || !Goal || !endDate) {
+        if (!title || !story || !Goal || !endDate) {
             return res.status(400).json({ info: 'All fields are required' });
         }
 
@@ -70,6 +69,7 @@ exports.createCampaignByNpo = async (req, res) => {
             ev,
             profilePic: campaignPhotoUrl,
             totalRaised: 0,
+            todaysDonation: 0,
             monthlyDonation: 0,
             endDate: parsedEndDate,
             lastDonationDate,
@@ -88,7 +88,6 @@ exports.createCampaignByNpo = async (req, res) => {
         return res.status(500).json({ error: `An error occurred while creating the Npo campaign because ${error}` });
     }
 };
-
 // Usage example in your API response
 exports.getSingleCampaign = async (req, res) => { 
     try {
@@ -106,7 +105,6 @@ exports.getSingleCampaign = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
-
 // Controller function to update campaign
 exports.updateNpoCampaign = async (req, res) => {
     try {
@@ -150,9 +148,6 @@ exports.updateNpoCampaign = async (req, res) => {
         return res.status(500).json({ error: `Server error: ${error.message}` });
     }
 };
-
-
-
 exports.NpoManagement=async(req,res)=>{
     try {
         const {donorId}=req.params
@@ -189,7 +184,6 @@ exports.NpoManagement=async(req,res)=>{
         res.status(500).json({message:`can not send message because ${error}`})
     }
 }
-
 exports.getNpoCampaigns = async (req, res) => {
     try {
       const npoId = req.user.id; 

@@ -109,39 +109,7 @@ const schemas = {
 
           ),
         
-        
 };
-
-
-// const userValidator = (validateAllFields = false, fieldsToValidate = []) => {
-//     return async (req, res, next) => {
-//        // Only trim fields that exist in the request body
-//         if (req.body.firstName) req.body.firstName = req.body.firstName.trim();
-//         if (req.body.lastName) req.body.lastName = req.body.lastName.trim();
-//         if (req.body.email) req.body.email = req.body.email.trim();
-//         if (req.body.organizationName) req.body.organizationName = req.body.organizationName.trim();
-
-//         const keysToValidate = {};
-//         Object.keys(schemas).forEach((key) => {
-//             if (validateAllFields || fieldsToValidate.includes(key)) {
-//                 keysToValidate[key] = req.body[key] !== undefined ? schemas[key].required() : schemas[key];
-//             } else if (req.body[key] !== undefined) {
-//                 keysToValidate[key] = schemas[key];
-//             }
-//         });
-
-//         const {firstName,lastName,email,password,organizationName,ConfirmNewPassword,phoneNumber,story,title,subtitle,oldPassword,NewPassword} = req.body
-//         const schema = joiValidator.object(keysToValidate);
-//         const { error } = schema.validate({firstName,lastName,email,password,organizationName,ConfirmNewPassword,phoneNumber,story,title,subtitle,oldPassword,NewPassword});
-
-//         if (error) {
-//             return res.status(400).json({ message: error.details[0].message });
-//         } else {
-//             return next();
-//         }
-//     };
-// };
-
 const userValidator = (validateAllFields = false, fieldsToValidate = []) => {
     return async (req, res, next) => {
         // Only trim fields that exist in the request body

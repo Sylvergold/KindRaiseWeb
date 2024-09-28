@@ -14,8 +14,7 @@ const checkCampaignStatus = async (req, res, next) => {
                 await campaign.save();
             }
         }
-
-        // Proceed to the next middleware or route handler
+      // Proceed to the next middleware or route handler
         next();
     } catch (error) {
         // Handle any errors that occur

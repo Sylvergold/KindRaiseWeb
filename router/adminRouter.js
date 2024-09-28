@@ -1,12 +1,10 @@
 const express=require("express")
 const adminrouter=express.Router()
-
 const{authenticate,authenticateAdmin}=require("../middleware/auth");
 
-const { deleteByAdmin,makeAdmin,deleteAllIndividual,getAllIndividual,getAllNpo,deleteOneNpo,makeCampaignActive,makeCampaignInactive,getAllCampaign,deleteCampaignById,deleteall,deleteallD,deleteallC } = require("../controller/adminController.js");
+const { deleteByAdmin,makeAdmin,deleteAllIndividual,getAllIndividual,getAllNpo,deleteOneNpo,makeCampaignActive,makeCampaignInactive,getAllCampaign,deleteCampaignById,deleteall,deleteallD,deleteallC,deleteAllCampaign } = require("../controller/adminController.js");
 
-
-////ADMIN MANAGEMENT///////
+//ADMIN MANAGEMENT//
 adminrouter.delete("/deleteoneIndividual/:id",authenticate,authenticateAdmin,deleteByAdmin)
 adminrouter.put('/makeadmin/:id',authenticate,authenticateAdmin,makeAdmin)
 adminrouter.delete("/deleteAllIndividual",authenticate,authenticateAdmin,deleteAllIndividual) 
@@ -20,4 +18,5 @@ adminrouter.delete("/deleteOneCampaign/:campaignId",authenticate,authenticateAdm
 adminrouter.delete("/delete-every",authenticate,authenticateAdmin,deleteall)
 adminrouter.delete("/delete-everyd",authenticate,authenticateAdmin,deleteallD) 
 adminrouter.delete("/delete-everyc",authenticate,authenticateAdmin,deleteallC) 
+adminrouter.delete("/delete-campaignsLimit",deleteAllCampaign) 
 module.exports=adminrouter 

@@ -1,7 +1,5 @@
 const cloudinary = require('../utilis/cloudinary'); 
-
 const multer=require("multer")
-
 
 const storage=multer.diskStorage({
     destination:(req,file,cb)=>{

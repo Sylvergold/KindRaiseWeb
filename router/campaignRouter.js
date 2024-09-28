@@ -4,11 +4,10 @@ const uploads=require("../utilis/multer.js")
 
 const{deleteCampaign, createCampaignByIndividual, getAllIndividualCampaigns, getCampaignById, updateIndividualCampaign }=require("../controller/IndividualcampaignCont")
 const {createCampaignByNpo,getNpoCampaigns,getSingleCampaign,updateNpoCampaign}=require("../controller/npoCampaignCont")
-  
-const { authenticate, authenticateindividual }=require("../middleware/auth")
+  const { authenticate, authenticateindividual }=require("../middleware/auth")
 const checkCampaignStatus=require("../middleware/checkStatus.js")
 
-     //individual campaign routes 
+//individual campaign routes 
 campaignrouter.delete("/deletecampaign",deleteCampaign) 
 campaignrouter.post("/createcampaign",uploads.single ('campaignPic'),authenticate,createCampaignByIndividual)
 campaignrouter.get("/getallIndividualcampaigns",authenticate,checkCampaignStatus,getAllIndividualCampaigns)

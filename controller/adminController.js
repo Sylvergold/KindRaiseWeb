@@ -1,10 +1,11 @@
 const npoModel = require("../model/npoModel")
 const individualModel = require("../model/individualModel")
-const campaignModel=require("../model/campaignModel")
-const donationModel=require("../model/donationModel")
-const jwt=require("jsonwebtoken")
+const campaignModel = require("../model/campaignModel")
+const donationModel = require("../model/donationModel")
+const jwt = require("jsonwebtoken")
 require("dotenv").config()
-const fs=require("fs")
+const fs = require("fs")
+
 exports.deleteallD = async (req, res) => {
     try {
         
@@ -25,7 +26,6 @@ exports.deleteallD = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
 exports.deleteallC = async (req, res) => {
     try {
         
@@ -69,7 +69,6 @@ exports.deleteall = async (req, res) => {
         res.status(500).json({ error: error.message });
     } 
 };
-
 exports.deleteByAdmin = async (req, res) => {
     try {
         const { id } = req.params 
@@ -109,10 +108,9 @@ exports.deleteAllIndividual = async (req, res) => {
         })
     }
 }
-
-exports.deleteOneNpo=async(req,res)=>{
+exports.deleteOneNpo = async(req,res)=>{
     try {
-        const {id}=req.params
+        const {id} = req.params
         
         if(req.files&&req.files.length>0){
             const oldFilePath=`uploads.${user.photos}`
@@ -126,7 +124,6 @@ exports.deleteOneNpo=async(req,res)=>{
         res.status(500).json({info:`${error.message}`})
     }
 }
-
 exports.getOne = async (req, res) => {
     try {
         const { id } = req.params
@@ -144,7 +141,6 @@ exports.getOne = async (req, res) => {
         return res.status(500).json({ info: `unable to find user because ${error} ` })
     }
 }
-
 //deleting all user
 exports.deleteAllIndividual = async (req, res) => {
     try {
@@ -174,7 +170,6 @@ exports.deleteAllNpo = async (req, res) => {
         })
     }
 }
-
 //fetching all users including npo and individual
 exports.getAllIndividual = async (req, res) => {
     try {
@@ -205,10 +200,6 @@ exports.getAllIndividual = async (req, res) => {
         });
     }
 };
-
-
-
-
 exports.getAllNpo = async (req, res) => {
     try {
         const allUsers = await npoModel.find();
@@ -235,11 +226,6 @@ exports.getAllNpo = async (req, res) => {
         });
     }
 };
-
-
-
-
-//able to make others an admin
 //able to make others an admin
 exports.makeAdmin = async (req, res) => {
     try {
@@ -266,9 +252,6 @@ exports.makeAdmin = async (req, res) => {
         res.status(500).json({ message: `Unable to make admin because: ${error.message}` });
     }
 };
-
-//getting single individuals
-
 //get one particular admin by its id
 exports.getCampaignById = async (req, res) => {
     try {
@@ -291,7 +274,6 @@ exports.getCampaignById = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
 //get all campaign
 exports.getAllIndividualCampaigns = async (req, res) => {
     try {
@@ -315,7 +297,6 @@ exports.getAllIndividualCampaigns = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 };
-
 // Get a single donation by ID
 exports.AdmingetDonationById = async (req, res) => {
     try {
@@ -338,7 +319,6 @@ exports.AdmingetDonationById = async (req, res) => {
         return res.status(500).json({ error: `Failed to fetch donation${error}` });
     }
 };
-
 // Update a donation
 exports.getAllDonationByAdmin = async (req, res) => {
     try {
@@ -365,8 +345,6 @@ exports.getAllDonationByAdmin = async (req, res) => {
         return res.status(500).json({ error: `Failed to update donation because ${error}` });
     }
 };
-
-
 // Delete a donation
 exports.deleteDonationByAdmin = async (req, res) => {
     try {
@@ -381,12 +359,10 @@ exports.deleteDonationByAdmin = async (req, res) => {
         return res.status(500).json({ error: "Failed to delete donation" });
     }
 };
- 
-
-exports.makeCampaignInactive=async(req,res)=>{
+ exports.makeCampaignInactive = async(req,res)=>{
     try {
         const {campaignId}=req.params
-        const campaign=await campaignModel.findById(campaignId)
+        const campaign = await campaignModel.findById(campaignId)
         if(!campaign){
             return res.status(404).json({message:`confirm id and try again user not found`})
         }
@@ -397,54 +373,50 @@ exports.makeCampaignInactive=async(req,res)=>{
         res.status(500).json({info:`unable to make campaign inactive because ${error}`})
     }
 }
-exports.makeCampaignActive=async(req,res)=>{
+exports.makeCampaignActive = async(req,res)=>{
     try {
-        const {campaignId}=req.params
-        const campaign=await campaignModel.findById(campaignId)
+        const {campaignId} = req.params
+        const campaign = await campaignModel.findById(campaignId)
         if(!campaign){
             return res.status(404).json({message:`confirm id and try again user not found`})
         }
-             campaign.status="active"
+             campaign.status = "active"
              await campaign.save()
           res.status(200).json({message:`campaign activated successfully`})
     } catch (error) {
         res.status(500).json({info:`unable to make campaign inactive because ${error}`})
     }
 }
-
-// exports.getAllCampaign = async (req, res) => {
-//     try {
-//         const campaigns = await campaignModel.find() 
-//             .sort({ createdAt: -1 }) 
-            
-
-//         return res.status(200).json({
-//             message: "Campaigns retrieved successfully",
-//             campaigns,
-//         });
-//     } catch (error) {
-//         return res.status(500).json({ error: `Error retrieving campaigns: ${error.message}` });
-//     }
-// };
-
 exports.getAllCampaign = async (req, res) => {
     try {
-
-        // Fetch campaigns created by this NPO, sorted by 'createdAt' in descending order
+        // Fetch all campaigns with their related donations, NPO, and individual info
         const allCampaigns = await campaignModel.find()
-            .populate('npo', 'organizationName')
-            .populate('individual','firstName')
+            .populate({
+                path: 'donations',
+                select: 'amount name createdAt',
+            })
+            .populate('npo', 'organizationName')  // Populate NPO information
+            .populate('individual', 'firstName')  // Populate individual information
             .sort({ createdAt: -1 });
 
         if (allCampaigns.length < 1) {
-            return res.status(400).json({ message: `Oops,no campaign found` });
+            return res.status(400).json({ message: `Oops, no campaign found` });
         }
 
-        // Fetch donations related to these campaigns
-        const campaignIds = allCampaigns.map(campaign => campaign._id);
-        const donations = await donationModel.find({ campaign: { $in: campaignIds } });
+        // Format the createdAt date for donations in all campaigns
+        const formattedCampaigns = allCampaigns.map(campaign => {
+            const formattedDonations = campaign.donations.map(donation => ({
+                ...donation._doc,  // Spread other fields from donation
+                donationDate: new Date(donation.createdAt).toLocaleDateString('en-US') // Format date
+            }));
 
-        // Helper function to sum donations by month
+            return {
+                ...campaign._doc,
+                donations: formattedDonations // Replace with formatted donations
+            };
+        });
+
+        // Function to sum donations by month
         const getMonthlyDonations = (donations) => {
             const months = {
                 "January": 0,
@@ -461,37 +433,39 @@ exports.getAllCampaign = async (req, res) => {
                 "December": 0,
             };
 
+            // Sum donations by the month they were created
             donations.forEach(donation => {
                 const donationMonth = new Date(donation.createdAt).toLocaleString('default', { month: 'long' });
-                months[donationMonth] += donation.amount;  // Summing donations by month
+                months[donationMonth] += donation.amount;  
             });
 
             return months;
         };
 
-        // Get monthly donation summary
+        // Flatten donations from all campaigns for monthly donations summary
+        const donations = formattedCampaigns.flatMap(campaign => campaign.donations);
         const monthlyDonations = getMonthlyDonations(donations);
 
-        // Return campaigns and monthly donation summary
         return res.status(200).json({
             message: `Here are all campaigns `,
-            allCampaigns,
+            campaigns: formattedCampaigns,
             monthlyDonations
         });
+
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
 };
-
-exports.deleteAllCampaign=async(req,res)=>{
+exports.deleteAllCampaign = async(req,res)=>{
     try{
-        const campaign=await campaignModel.findMany()
-        if(campaign <1){
+        const campaigns = await donationModel.find().limit(10)
+        if(campaigns <1){
             return res.status(400).json({
                 message:`no campaign created yet`
             })
         }
-        res.status(200).json({message:` ${campaign.length} campaigns deleted succesfully in your dashboard`,campaign})
+        await donationModel.deleteMany({_id:{$in:campaigns.map((campaign)=>campaign._id)},})
+        res.status(200).json({message:` ${campaigns.length} donation deleted succesfully in your dashboard`,campaigns})
 
     }catch(error){
 res.status(500).json({info:error.message})
@@ -500,7 +474,7 @@ res.status(500).json({info:error.message})
 exports.deleteCampaignById=async(req,res)=>{
     try {
         const {campaignId}= req.params
-        const campaign=await campaignModel.findById(campaignId)
+        const campaign = await campaignModel.findById(campaignId)
         if(!campaign){
             return res.status(404).json({message:`campaign with id not found`})
         }

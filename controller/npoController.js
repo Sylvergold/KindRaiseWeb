@@ -1,13 +1,11 @@
 const individualModel = require("../model/individualModel")
-const npoModel=require("../model/npoModel")
-const cloudinary=require("../utilis/cloudinary")
-const jwt=require("jsonwebtoken")
+const npoModel = require("../model/npoModel")
+const cloudinary = require("../utilis/cloudinary")
+const jwt = require("jsonwebtoken")
 const bcryptjs = require("bcryptjs")   
 require("dotenv").config()
-const sendmail=require("../helpers/nodemailer")
-const {signUpTemplate,verifyTemplate,forgotPasswordTemplate}=require("../helpers/html")
-
-
+const sendmail = require("../helpers/nodemailer")
+const {signUpTemplate,verifyTemplate,forgotPasswordTemplate} = require("../helpers/html")
 
 exports.NposignUp = async (req, res) => {
     try {
@@ -75,7 +73,7 @@ exports.NposignUp = async (req, res) => {
     
         await newNpo.save();
 
-        const token = jwt.sign({ id: newNpo._id, email: newNpo.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
+        const token = jwt.sign({ id: newNpo._id, email: newNpo.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         
         const verifyLink = `https://kindraise.onrender.com/api/v1/verify-email/${token}`;
@@ -105,11 +103,10 @@ exports.NposignUp = async (req, res) => {
         res.status(500).json({ message: `Sign-up failed: ${error.message}` });
     }
 };
-
-exports.NpoverifyEmail=async(req,res)=>{
+exports.NpoverifyEmail = async(req,res)=>{
     try {
         //extract token from params
-        const {token}=req.params
+        const {token} = req.params
         //extract email from the verified token
         const {email}=jwt.verify(token,process.env.JWT_SECRET)
             const user=await npoModel.findOne({email})
@@ -122,7 +119,7 @@ exports.NpoverifyEmail=async(req,res)=>{
              }
              user.isVerified=true
              await user.save()
-             return res.redirect("https://kindraise.vercel.app/login")
+             return res.redirect("https://kindraiseweb.vercel.app/login")
     } catch (error) {
         if(error instanceof jwt.JsonWebTokenError){
             return res.status(500).json({info:`unable to verify because ${error}`})
@@ -130,12 +127,11 @@ exports.NpoverifyEmail=async(req,res)=>{
         res.status(500).json({info:`unable to verify because ${error}`})
     }
 }
-
-exports.NporesendVerificationEmail=async (req,res)=>{
+exports.NporesendVerificationEmail = async (req,res)=>{
     try {
-       const {email}=req.body
+       const {email} = req.body
       
-       const user=await npoModel.findOne({email})
+       const user = await npoModel.findOne({email})
        if(email.length<=8){
         return res.status(400).json('please kindly input your email correctly')
        }
@@ -145,9 +141,9 @@ exports.NporesendVerificationEmail=async (req,res)=>{
        if(user.isVerified){
         return res.status(400).json({info:`user has already beem verified`})
        }
-         const token=jwt.sign({id:user._id,email:user.email},process.env.JWT_SECRET,{expiresIn:` 1h`})
-         const verifyLink=`${req.protocol}://${req.get("host")}/api/v1/user/verify-email/${token}`
-         let mailOptions={
+         const token = jwt.sign({id:user._id,email:user.email},process.env.JWT_SECRET,{expiresIn:`1h`})
+         const verifyLink = `${req.protocol}://${req.get("host")}/api/v1/user/verify-email/${token}`
+         let mailOptions = {
             email:user.email,
             subject:"resend verification link",
             html:verifyTemplate(verifyLink,user.firstName)
@@ -158,20 +154,19 @@ exports.NporesendVerificationEmail=async (req,res)=>{
         res.status(500).json({message:`unable to resend verification link because ${error}`})
     }
 }
-
-exports.NpoforgetPassword=async(req,res)=>{
+exports.NpoforgetPassword = async(req,res)=>{
     try {
         
-        const {email}=req.body 
+        const {email} = req.body 
         
-       const user=await npoModel.findOne({email})
+       const user = await npoModel.findOne({email})
        if(!user){
         return res.status(400).json({message:`user with email not in database`})
        } 
-        const resetToken=jwt.sign({id:user._id,email:user.email},process.env.JWT_SECRET,{expiresIn:`1h`})
-        const forgotPasswordLink=`${req.protocol}://${req.get("host")}/api/v1/reset-Password/${resetToken}`
+        const resetToken = jwt.sign({id:user._id,email:user.email},process.env.JWT_SECRET,{expiresIn:`1h`})
+        const forgotPasswordLink = `${req.protocol}://${req.get("host")}/api/v1/reset-Password/${resetToken}`
         //send forget password mail
-        let mailOptions={
+        let mailOptions = {
             email:user.email,
             subject:"forget password",
             html:forgotPasswordTemplate(forgotPasswordLink,user.firstName)
@@ -182,8 +177,6 @@ exports.NpoforgetPassword=async(req,res)=>{
         res.status(500).json({info:` can not send forget password template because ${error} `})
     }
 }
-
-
 exports.NporesetPassword = async (req, res) => {
     try {
         const { token } = req.params;
@@ -218,8 +211,6 @@ exports.NporesetPassword = async (req, res) => {
         res.status(500).json({ info: `Unable to reset password because ${error.message}` });
     }
 };
-
-
 exports.NpochangePassword=async(req,res)=>{
     try {
         const {token}=req.params
@@ -229,16 +220,16 @@ exports.NpochangePassword=async(req,res)=>{
         if(!user){
             return res.status(400).json({info:`user not found`})
         }
-        const compare=await bcryptjs.compare(oldPassword,user.password)
+        const compare=await bcrypt.compare(oldPassword,user.password)
         if(!compare){
             return res.status(400).json({info:`oops seems you have forgoteen your previous password,click the forget password button to proceed`})
         }
-        if(ConfirmNewPassword !==NewPassword){
+        if(ConfirmNewPassword !== NewPassword){
             return res.status(400).json({message:'new password and confirm password does not match try again to proceed'})
         }
-        const salt=await bcrypt.genSalt(10)
-        const hashed=await bcrypt.hash(NewPassword,salt)
-        user.password=hashed
+        const salt = await bcrypt.genSalt(10)
+        const hashed = await bcrypt.hash(NewPassword,salt)
+        user.password = hashed
         await user.save()
         
         
@@ -247,9 +238,6 @@ exports.NpochangePassword=async(req,res)=>{
 res.status(500).json({info:`unable to change password because ${error}`})
     }
 }
-
-
- 
 exports.updateNpo = async (req, res) => {
     try { 
         const { id } = req.params;
@@ -328,10 +316,9 @@ exports.NpologOut = async (req, res) => {
         res.status(500).json({ info: `Unable to log-out because ${error}` });
     }
 };
-
-exports.getOneNpo=async(req,res)=>{
+exports.getOneNpo = async(req,res)=>{
     try {
-      const {id}=req.params
+      const {id} = req.params
       const details=await npoModel.findById(id) 
       if(!details){
         return res.status(400).json({info:`user with id not found`})

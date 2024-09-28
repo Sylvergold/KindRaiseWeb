@@ -1,5 +1,5 @@
 {
-  "name": "fundraise",
+  "name": "kindraiseweb",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -9,7 +9,7 @@
     "dev": "nodemon server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "ogudu sylvester",
   "license": "ISC",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
