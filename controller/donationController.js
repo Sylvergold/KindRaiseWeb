@@ -177,10 +177,12 @@ const createDonation = async (req, res) => {
     return res.status(500).json({ error: `Failed to create donation: ${error.message}` });
   }
 };
+
 const trackDonationHistory = async (req, res) => {
   const userId = req.user._id;
   console.log(userId)
   let donations;
+
   try {
     // 
     donations = await donationModel.find({ individual: userId })
@@ -195,19 +197,25 @@ const trackDonationHistory = async (req, res) => {
         donations
       });
     }
-     donations = await donationModel.find({
+
+
+    donations = await donationModel.find({
       npo: userId
     })
       .select("amount name message email createdAt")
       .populate("campaign", "title")
       .sort({ createdAt: -1 });
+
       donations=donations.map(donation=>({
         ...donation._doc,
         donationDate:new Date(donation.createdAt).toLocaleDateString('en-Us')
       }))
-      if (donations.length === 0) {
+
+
+    if (donations.length === 0) {
       return res.status(404).json({ message: `No donation history found for user ${userId}` });
     }
+
     return res.status(200).json({
       message: `Successfully retrieved donation history for user`,
       donations
@@ -217,6 +225,7 @@ const trackDonationHistory = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
 const NpoManagement = async (req, res) => {
   try {
     const { donorId } = req.params; 
@@ -225,14 +234,19 @@ const NpoManagement = async (req, res) => {
     if (!donor) {
       return res.status(404).json({ message: 'Donor not found for the specified donation' });
     }
+
     const campaign = donor.campaign;
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found' });
     }
+
+    
     const Nporeceiver = campaign.npo;
     if (!Nporeceiver || Nporeceiver.toString() !== req.user._id.toString()) {
       return res.status(401).json({ info: 'Only the NPO campaign creator can perform this action' });
     }
+
+    
     const Npomanagement = new messageModel({
       campaign: campaign._id,
       donor: donorId,
@@ -242,17 +256,23 @@ const NpoManagement = async (req, res) => {
     });
 
     await Npomanagement.save();
+
+  
     await sendmail({
       email: donor.email,
       subject: 'Message from the Campaign You Donated To',
       html: `<p>Hello, ${message}</p>`,
     });
-     res.status(200).json({ message: `Campaign creator successfully sent a message to ${donor.email}` });
+
+    res.status(200).json({ message: `Campaign creator successfully sent a message to ${donor.email}` });
   } catch (error) {
     console.error('Error sending message:', error);
     res.status(500).json({ message: `Cannot send message because: ${error.message}` });
   }
 };
+
+
+
 
 module.exports = {
   createDonation,
@@ -260,4 +280,5 @@ module.exports = {
   getAllDonation,
   NpoManagement,
   trackDonationHistory,
+
 };

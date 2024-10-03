@@ -1,5 +1,5 @@
 const express = require("express")
-const router = express.Router()
+const router  = express.Router()
 const{ createDonation,getAllDonation,getDonationById,NpoManagement,trackDonationHistory} = require("../controller/donationController")
 const { authenticate } = require("../middleware/auth")
 
@@ -9,4 +9,5 @@ router.get("/getDonationById/:donationId",authenticate,getDonationById)
 router.post("/send-message/:donorId",authenticate,NpoManagement)
 router.get("/history",authenticate,trackDonationHistory)
 router.get("/history",authenticate,trackDonationHistory)
-module.exports=router
+
+module.exports = router

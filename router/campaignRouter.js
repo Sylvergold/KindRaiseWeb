@@ -1,11 +1,12 @@
-const express=require("express")
-const campaignrouter=express.Router()
-const uploads=require("../utilis/multer.js")
+const express = require("express")
+const campaignrouter = express.Router()
+const uploads = require("../utilis/multer.js")
 
-const{deleteCampaign, createCampaignByIndividual, getAllIndividualCampaigns, getCampaignById, updateIndividualCampaign }=require("../controller/IndividualcampaignCont")
+const{deleteCampaign, createCampaignByIndividual, getAllIndividualCampaigns, getCampaignById, updateIndividualCampaign } = require("../controller/IndividualcampaignCont")
 const {createCampaignByNpo,getNpoCampaigns,getSingleCampaign,updateNpoCampaign}=require("../controller/npoCampaignCont")
-  const { authenticate, authenticateindividual }=require("../middleware/auth")
-const checkCampaignStatus=require("../middleware/checkStatus.js")
+  
+const { authenticate, authenticateindividual }=require("../middleware/auth")
+const checkCampaignStatus = require("../middleware/checkStatus.js")
 
 //individual campaign routes 
 campaignrouter.delete("/deletecampaign",deleteCampaign) 
@@ -20,4 +21,4 @@ campaignrouter.get("/get-NpoallCampaign",authenticate,checkCampaignStatus,getNpo
 campaignrouter.put("/update-campaign/:campaignId",uploads.single ('campaignPic'),authenticate,checkCampaignStatus,updateNpoCampaign)
  
  
-module.exports=campaignrouter 
+module.exports = campaignrouter 

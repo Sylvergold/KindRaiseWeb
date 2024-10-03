@@ -2,7 +2,7 @@ const npoModel = require("../model/npoModel")
 const individualModel = require("../model/individualModel")
 const cloudinary = require("../utilis/cloudinary.js")
 const jwt = require("jsonwebtoken")
-const bcryptjs = require("bcryptjs")
+const bcrypt = require("bcryptjs")
 require("dotenv").config()
 const sendmail = require("../helpers/nodemailer")
 const { signUpTemplate, verifyTemplate, forgotPasswordTemplate } = require("../helpers/html")
@@ -30,6 +30,8 @@ exports.signUp = async (req, res) => {
         if (existingPhoneIndividual || existingPhoneNpo) {
             return res.status(400).json({ message: 'Phone number already in use' });
         }
+
+
         // Handle file upload
         let profilePicUrl = null;
         if (req.file) {
@@ -42,8 +44,8 @@ exports.signUp = async (req, res) => {
         }
        
        // Hash password
-        const salt = await bcryptjs.genSalt(10);
-        const hashedPassword = await bcryptjs.hash(password, salt);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         // Create new user
         const newUser = new individualModel({
@@ -123,11 +125,11 @@ exports.logIn = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ info: `log in must contain email and password` })
         } 
-        const lowerCase = email.toLowerCase()
+        const lowerCase=email.toLowerCase()
         let user
           user = await individualModel.findOne({email:lowerCase})
             if(!user){
-            user = await npoModel.findOne({email:lowerCase})
+            user=await npoModel.findOne({email:lowerCase})
             }
         if (!user) {
             return res.status(400).json({ message: `user with email not found` })
@@ -164,7 +166,7 @@ exports.resendVerificationEmail = async (req, res) => {
         if (user.isVerified) {
             return res.status(400).json({ info: `user has already beem verified` })
         }
-        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: `1h` })
+        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: `20 minutes` })
         const verifyLink = `${req.protocol}://${req.get("host")}/api/v1/user/verify-email/${token}`
         let mailOptions = {
             email: user.email,
@@ -177,6 +179,7 @@ exports.resendVerificationEmail = async (req, res) => {
         res.status(500).json({ message: `unable to resend verification link because ${error}` })
     }
 }
+
 exports.forgetPassword = async (req, res) => {
     try {
 
@@ -186,7 +189,7 @@ exports.forgetPassword = async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: `user with email not in database` })
         }
-        const resetToken = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: `1h` })
+        const resetToken = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: `20 minutes` })
         const forgotPasswordLink = `${req.protocol}://${req.get("host")}/api/v/resetPassword/${resetToken}`
         //send forget password mail
         let mailOptions = {
@@ -195,11 +198,13 @@ exports.forgetPassword = async (req, res) => {
             html: forgotPasswordTemplate(forgotPasswordLink, user.firstName)
         }
         await sendmail(mailOptions)
-        res.status(200).json({ info: `forget password template sent successfully`, resetToken })
+        res.status(200).json({ info: `forget password template sent successfully `, resetToken })
     } catch (error) {
         res.status(500).json({ info: ` can not send forget password template because ${error} ` })
     }
 }
+
+
 exports.resetPassword = async (req, res) => {
     try {
         const { token } = req.params;
@@ -222,8 +227,8 @@ exports.resetPassword = async (req, res) => {
         }
 
         // Hash the new password
-        const salt = await bcryptjs.genSalt(10);
-        const hash = await bcryptjs.hash(newPassword, salt);
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(newPassword, salt);
 
         // Update the user's password
         user.password = hash;
@@ -234,6 +239,8 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ info: `Unable to reset password because ${error.message}` });
     }
 };
+
+
 exports.changePassword = async (req, res) => {
     try {
         const { token } = req.params
@@ -250,8 +257,8 @@ exports.changePassword = async (req, res) => {
         if (ConfirmNewPassword !== NewPassword) {
             return res.status(400).json({ message: 'new password and confirm password does not match try again to proceed' })
         }
-        const salt = await bcryptjs.genSalt(10)
-        const hashed = await bcryptjs.hash(NewPassword, salt) 
+        const salt = await bcrypt.genSalt(10)
+        const hashed = await bcrypt.hash(NewPassword, salt) 
         user.password = hashed
         await user.save()
 
@@ -261,6 +268,7 @@ exports.changePassword = async (req, res) => {
         res.status(500).json({ info: `unable to change password because ${error}` })
     }
 }
+
 exports.updatedindividual = async (req, res) => {
     try { 
         const { id } = req.params;
@@ -309,6 +317,7 @@ exports.updatedindividual = async (req, res) => {
         res.status(500).json({ message: `Error: ${error.message}` });
     }
 };
+   
 exports.logOut = async (req, res) => {
     try {
         const auth = req.headers.authorization;
@@ -343,6 +352,7 @@ exports.logOut = async (req, res) => {
         res.status(500).json({ info: `Unable to log-out because ${error}` });
     }
 };
+
 exports.getOne = async (req, res) => {
     try {
         const { id } = req.params

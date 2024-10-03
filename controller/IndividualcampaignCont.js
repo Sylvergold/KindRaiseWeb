@@ -4,7 +4,6 @@ const individualModel = require("../model/individualModel")
 const npoModel = require("../model/npoModel")
 const cloudinary=require("../utilis/cloudinary")
 const sendmail=require("../helpers/html")
-
 exports.createCampaignByIndividual = async (req, res) => {
     try {
             console.log(req.user)
@@ -59,6 +58,7 @@ exports.createCampaignByIndividual = async (req, res) => {
         return res.status(500).json({ error: `An error occurred while creating the individual campaign because ${error}` });
     }
 };
+
 exports.getCampaignById = async (req, res) => {
     try {
       const { campaignId } = req.params;
@@ -81,7 +81,9 @@ exports.getCampaignById = async (req, res) => {
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
-};
+  };
+  
+
 exports.getAllIndividualCampaigns = async (req, res) => {
     try {
         const individualId = req.user.id; 
@@ -104,6 +106,7 @@ exports.getAllIndividualCampaigns = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 };
+
 exports.updateIndividualCampaign = async (req, res) => {
     try {
         const { story, subtitle } = req.body;
@@ -147,6 +150,8 @@ exports.updateIndividualCampaign = async (req, res) => {
         return res.status(500).json({ error: `Server error: ${error.message}` });
     }
 };
+
+
 exports.deleteCampaign=async(req,res)=>{
     try {
         const allUsers = await individualModel.find()
