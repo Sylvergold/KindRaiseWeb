@@ -1,11 +1,9 @@
 const joiValidator = require("@hapi/joi");
 
 const schemas = {
-
     firstName: joiValidator.string().trim()
         .min(3)
         .optional()
-        .pattern(/^[^\s].*[^\s]$/) // Ensures no leading or trailing spaces
         .pattern(/^[A-Za-z]+(?: [A-Za-z]+)*$/) // Ensures only alphabetic characters and allows spaces within
         .messages({
             'string.pattern.base': 'First name must not start or end with  spaces and should contain only letters.',

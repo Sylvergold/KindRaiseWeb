@@ -121,7 +121,6 @@ const signUpTemplate = (verifyLink, organizationName) => {
   `;
 };
 
-
 const verifyTemplate = (verifyLink, fullName) => {
     return `
     <!DOCTYPE html>
@@ -198,6 +197,7 @@ const verifyTemplate = (verifyLink, fullName) => {
   </html>
 `;
 };
+
 const forgotPasswordTemplate = (resetLink, firstName) => {
   return `
     <!DOCTYPE html>
@@ -381,6 +381,7 @@ const donationTemplate = (name, amount, campaignTitle, date, donationLink) => {
 </html>
   `;
 };
+
 const campaignCreatorTemplate = (campaignTitle, campaignLink = '') => {
   return `
 <!DOCTYPE html>

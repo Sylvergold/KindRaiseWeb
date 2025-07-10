@@ -31,7 +31,6 @@ exports.signUp = async (req, res) => {
             return res.status(400).json({ message: 'Phone number already in use' });
         }
 
-
         // Handle file upload
         let profilePicUrl = null;
         if (req.file) {
@@ -95,6 +94,7 @@ exports.signUp = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 };
+
 exports.verifyEmail = async (req, res) => {
     try {
         //extract token from params
@@ -119,17 +119,18 @@ exports.verifyEmail = async (req, res) => {
         res.status(500).json({ info: `unable to verify because ${error}` })
     }
 }
+
 exports.logIn = async (req, res) => {
     try { 
         const { email, password } = req.body
         if (!email || !password) {
             return res.status(400).json({ info: `log in must contain email and password` })
         } 
-        const lowerCase=email.toLowerCase()
+        const lowerCase = email.toLowerCase()
         let user
           user = await individualModel.findOne({email:lowerCase})
             if(!user){
-            user=await npoModel.findOne({email:lowerCase})
+            user = await npoModel.findOne({email:lowerCase})
             }
         if (!user) {
             return res.status(400).json({ message: `user with email not found` })
@@ -153,6 +154,7 @@ exports.logIn = async (req, res) => {
         res.status(500).json({ info: `cannot log in because ${error}` })
     }
 }
+
 //if token expired and user want to receive another verification message
 exports.resendVerificationEmail = async (req, res) => {
     try {
@@ -204,7 +206,6 @@ exports.forgetPassword = async (req, res) => {
     }
 }
 
-
 exports.resetPassword = async (req, res) => {
     try {
         const { token } = req.params;
@@ -240,7 +241,6 @@ exports.resetPassword = async (req, res) => {
     }
 };
 
-
 exports.changePassword = async (req, res) => {
     try {
         const { token } = req.params
@@ -261,7 +261,6 @@ exports.changePassword = async (req, res) => {
         const hashed = await bcrypt.hash(NewPassword, salt) 
         user.password = hashed
         await user.save()
-
 
         res.status(200).json({ information: `password changed successfully` })
     } catch (error) {
@@ -290,7 +289,6 @@ exports.updatedindividual = async (req, res) => {
             missionStatement: missionStatement||user.missionStatement
         };
 
-        
         if (req.files && req.files.length > 0) {
             
             const oldFilePath = path.join(__dirname, 'uploads', user.photos);

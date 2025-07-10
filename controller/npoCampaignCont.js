@@ -1,17 +1,15 @@
 const campaignModel = require("../model/campaignModel")
 const individualModel = require("../model/individualModel")
 const npoModel = require("../model/npoModel")
-
 const fs = require('fs');
 const path = require('path');
-
 const messageModel = require("../model/messageModel")
 const sendmail = require("../helpers/html")
 const donationModel = require("../model/donationModel")
 const cloudinary = require("../utilis/cloudinary")
+
 const twoYearsFromNow = new Date();
 twoYearsFromNow.setFullYear(twoYearsFromNow.getFullYear() + 2);
-
 
 exports.createCampaignByNpo = async (req, res) => {
     try {
@@ -24,7 +22,7 @@ exports.createCampaignByNpo = async (req, res) => {
 
         // Check if the NPO already has 5 campaigns
         const campaignCount = await campaignModel.countDocuments({ npo: npoId });
-        if (campaignCount >= 20) {
+        if (campaignCount >= 21) {
             return res.status(403).json({ info: `You have reached the limit of 20 active campaigns` });
         }
 
@@ -152,12 +150,10 @@ exports.updateNpoCampaign = async (req, res) => {
     }
 };
 
-
-
 exports.NpoManagement = async(req,res)=>{
     try {
         const {donorId} = req.params
-        const {campaignId,message}=req.body
+        const {campaignId,message} = req.body
 
         const donor = await donationModel.findOne({_id:donorId,campaign:campaignId})
         if(!donor){
@@ -200,8 +196,6 @@ exports.getNpoCampaigns = async (req, res) => {
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-  
-      
       const allCampaigns = await campaignModel.find({ 'npo': npoId })
         .populate('npo', 'organizationName')
         .populate({ path: 'donations', select: 'amount createdAt' }) 
@@ -210,12 +204,10 @@ exports.getNpoCampaigns = async (req, res) => {
       if (allCampaigns.length < 1) {
         return res.status(400).json({ message: `Oops, dear ${user.organizationName}, you have not created any campaigns yet` });
       }
-  
-      
       const totalRaisedFromAllCampaigns = allCampaigns.reduce((total, campaign) => total + (campaign.totalRaised || 0), 0);
+    
     //   console.log(typeof totalRaisedFromAllCampaigns)
-      
-      const campaignIds = allCampaigns.map(campaign => campaign._id);
+    const campaignIds = allCampaigns.map(campaign => campaign._id);
       const donations = await donationModel.find({ campaign: { $in: campaignIds } });
   
       const getMonthlyDonations = (donations) => {
@@ -234,8 +226,6 @@ exports.getNpoCampaigns = async (req, res) => {
           { month: "Nov", amount: 0 },
           { month: "Dec", amount: 0 },
         ];
-  
-        
         donations.forEach(donation => {
           
           const donationMonth = new Date(donation.createdAt).toLocaleString('default', { month: 'short' });

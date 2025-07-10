@@ -1,7 +1,8 @@
-const jwt = require('jsonwebtoken');
+const jwt = require ('jsonwebtoken');
 require('dotenv').config();
 const userModel = require('../model/individualModel');
 const npoModel=require("../model/npoModel")
+
 exports.authenticate = async (req, res, next) => {
     try {
         const auth = req.headers.authorization;
@@ -52,6 +53,7 @@ exports.authenticateAdmin = (req, res, next) => {
         });
     }
 };
+
 exports.authenticateindividual = (req, res, next) => {
     try {
         if(!req.user){

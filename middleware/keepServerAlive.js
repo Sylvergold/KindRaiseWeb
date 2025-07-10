@@ -1,9 +1,9 @@
-const http=require("http")
-const https=require("https")
+const http = require("http")
+const https = require("https")
   
-const keepServerAlive=()=>{
+const keepServerAlive = ()=>{
     const url=`https://Kindraise.onrender.com/`
-    const protocol= url.startsWith('https')?https:http;
+    const protocol = url.startsWith('https')?https:http;
     setInterval(()=>{
         protocol.get(url,(res)=>{
             console.log(`Pinging the server: ${url}-status Code:${res.statusCode}`)
@@ -13,4 +13,4 @@ const keepServerAlive=()=>{
     },300000);
 }
 
-module.exports=keepServerAlive   
+module.exports = keepServerAlive   

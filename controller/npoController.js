@@ -4,19 +4,17 @@ const cloudinary = require("../utilis/cloudinary")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")   
 require("dotenv").config()
-const sendmail=require("../helpers/nodemailer")
-const {signUpTemplate,verifyTemplate,forgotPasswordTemplate}=require("../helpers/html")
-
-
+const sendmail = require("../helpers/nodemailer")
+const {signUpTemplate,verifyTemplate,forgotPasswordTemplate} = require("../helpers/html")
 
 exports.NposignUp = async (req, res) => {
     try {
         // Destructure fields from the request body
         const {email, password, phoneNumber, organizationName,registrationNumber} = req.body;
-        const allFields= { email, password, phoneNumber, organizationName,registrationNumber}
+        const allFields = { email, password, phoneNumber, organizationName, registrationNumber}
 
         // Validate required fields
-        if ( !email || !password ||!organizationName||!registrationNumber||!phoneNumber) {
+        if ( !email || !password ||!organizationName ||!registrationNumber ||!phoneNumber) {
             const missingFields = [];
     for (const [key, value] of Object.entries(allFields)) {
         if (!value) {
@@ -143,17 +141,17 @@ exports.NporesendVerificationEmail = async (req,res)=>{
         return res.status(400).json({message:`user with email not in database`})
        } 
        if(user.isVerified){
-        return res.status(400).json({info:`user has already beem verified`})
+        return res.status(400).json({info:`user has already been verified`})
        }
-         const token = jwt.sign({id:user._id,email:user.email},process.env.JWT_SECRET,{expiresIn:`20 minutes`})
+         const token = jwt.sign({id:user._id, email:user.email}, process.env.JWT_SECRET, {expiresIn:`20 minutes`})
          const verifyLink = `${req.protocol}://${req.get("host")}/api/v1/user/verify-email/${token}`
          let mailOptions = {
             email:user.email,
             subject:"resend verification link",
-            html:verifyTemplate(verifyLink,user.firstName)
+            html:verifyTemplate(verifyLink, user.firstName)
          }
          await sendmail(mailOptions)
-         res.status(200).json({info:`verification email resend successfully,check your email to verify`})
+         res.status(200).json({info:`Verification email resend successfully, check your email to verify`})
     } catch (error) {
         res.status(500).json({message:`unable to resend verification link because ${error}`})
     }
@@ -219,7 +217,6 @@ exports.NporesetPassword = async (req, res) => {
     }
 };
 
-
 exports.NpochangePassword = async(req,res)=>{
     try {
         const {token} = req.params
@@ -248,8 +245,6 @@ res.status(500).json({info:`unable to change password because ${error}`})
     }
 }
 
-
- 
 exports.updateNpo = async (req, res) => {
     try { 
         const { id } = req.params;
@@ -294,6 +289,7 @@ exports.updateNpo = async (req, res) => {
         res.status(500).json({ message: `Error: ${error.message}` });
     }
 };
+
 exports.NpologOut = async (req, res) => { 
     try {
         const auth = req.headers.authorization;

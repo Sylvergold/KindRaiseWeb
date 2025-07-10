@@ -2,7 +2,6 @@ const express = require("express")
 const adminrouter = express.Router()
 
 const{authenticate,authenticateAdmin}=require("../middleware/auth");
-
 const { deleteByAdmin,makeAdmin,deleteAllIndividual,getAllIndividual,getAllNpo,deleteOneNpo,makeCampaignActive,makeCampaignInactive,getAllCampaign,deleteCampaignById,deleteall,deleteallD,deleteallC,deleteAllCampaign } = require("../controller/adminController.js");
 
 ////ADMIN MANAGEMENT///////
