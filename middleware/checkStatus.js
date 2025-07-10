@@ -1,5 +1,5 @@
 const campaignModel = require("../model/campaignModel")
-const donationModel=require("../model/donationModel")
+const donationModel = require("../model/donationModel")
 const checkCampaignStatus = async (req, res, next) => {
     try {
         // Find all active campaigns

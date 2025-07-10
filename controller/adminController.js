@@ -1,17 +1,14 @@
 const npoModel = require("../model/npoModel")
 const individualModel = require("../model/individualModel")
-const campaignModel=require("../model/campaignModel")
-const donationModel=require("../model/donationModel")
-const jwt=require("jsonwebtoken")
+const campaignModel = require("../model/campaignModel")
+const donationModel = require("../model/donationModel")
+const jwt = require("jsonwebtoken")
 require("dotenv").config()
-const fs=require("fs")
+const fs = require("fs")
+
 exports.deleteallD = async (req, res) => {
     try {
-        
-        const deletedDonation= await donationModel.deleteMany();
-
-
-
+        const deletedDonation = await donationModel.deleteMany();
         const totalDeleted = deletedDonation.deletedCount
         if (totalDeleted === 0) {
             return res.status(200).json({ message: `No users found in the database` });
@@ -28,8 +25,7 @@ exports.deleteallD = async (req, res) => {
 
 exports.deleteallC = async (req, res) => {
     try {
-        
-        const campaigns= await campaignModel.deleteMany();
+        const campaigns = await campaignModel.deleteMany();
 
         const totalDeleted = campaigns.deletedCount
         if (totalDeleted === 0) {
@@ -44,22 +40,16 @@ exports.deleteallC = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 //admin deleting single user 
 exports.deleteall = async (req, res) => {
     try {
-        
         const deletedIndividuals = await individualModel.deleteMany();
-
-        
         const deletedNpos = await npoModel.deleteMany();
-
-    
         const totalDeleted = deletedIndividuals.deletedCount + deletedNpos.deletedCount;
         if (totalDeleted === 0) {
             return res.status(200).json({ message: `No users found in the database` });
         }
-
-        
         res.status(200).json({
             message: `${totalDeleted} users deleted successfully`,
             deletedIndividuals: deletedIndividuals.deletedCount,
@@ -88,13 +78,12 @@ exports.deleteByAdmin = async (req, res) => {
                 fs.unlinkSinc(oldFilePath)
             }
         }
-        
-      
         return res.status(200).json({ info: `delete successful`,name:userInfo.firstName })
     } catch (error) {
         res.status(500).json({ info: `${error.message}` })
     }
 }
+
 exports.deleteAllIndividual = async (req, res) => {
     try {
         const allUsers = await individualModel.find()
@@ -113,7 +102,6 @@ exports.deleteAllIndividual = async (req, res) => {
 exports.deleteOneNpo=async(req,res)=>{
     try {
         const {id}=req.params
-        
         if(req.files&&req.files.length>0){
             const oldFilePath=`uploads.${user.photos}`
             if(fs.existsSinc(oldFilePath)){
@@ -138,7 +126,6 @@ exports.getOne = async (req, res) => {
         if (!userInfo) {
             return res.status(404).json({ message: `,oops!!,neither npo and individual details are found ` })
         }
-
         res.status(200).json({ message: `${userInfo.firstName} details collected successfully`, userInfo })
     } catch (error) {
         return res.status(500).json({ info: `unable to find user because ${error} ` })
@@ -160,6 +147,7 @@ exports.deleteAllIndividual = async (req, res) => {
         })
     }
 }
+
 exports.deleteAllNpo = async (req, res) => {
     try {
         const allUsers = await npoModel.find()
@@ -182,13 +170,10 @@ exports.getAllIndividual = async (req, res) => {
         if (allUsers <= 0) {
             return res.status(400).json({ info: `oops !! no user found in database` })
         }
-
         const everyUsers = allUsers.map(user => {
 
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1 hour" });
-
-
-            return {
+         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1 hour" });
+         return {
                 ...user.toObject(),
                 token,
                 isAdmin: user.role === 'admin' ? true : false
@@ -206,17 +191,12 @@ exports.getAllIndividual = async (req, res) => {
     }
 };
 
-
-
-
 exports.getAllNpo = async (req, res) => {
     try {
         const allUsers = await npoModel.find();
         if(allUsers<=0){
             return res.status(400).json({info:`oops !! no user found in database`})
         }
-
-       
         const everyUsers= allUsers.map(user=>{
             const token = jwt.sign({ id:user._id }, process.env.JWT_SECRET, { expiresIn: "1 hour" });
             return {
@@ -236,10 +216,6 @@ exports.getAllNpo = async (req, res) => {
     }
 };
 
-
-
-
-//able to make others an admin
 //able to make others an admin
 exports.makeAdmin = async (req, res) => {
     try {
@@ -266,8 +242,6 @@ exports.makeAdmin = async (req, res) => {
         res.status(500).json({ message: `Unable to make admin because: ${error.message}` });
     }
 };
-
-//getting single individuals
 
 //get one particular admin by its id
 exports.getCampaignById = async (req, res) => {
@@ -366,12 +340,10 @@ exports.getAllDonationByAdmin = async (req, res) => {
     }
 };
 
-
 // Delete a donation
 exports.deleteDonationByAdmin = async (req, res) => {
     try {
         const {donationId}=req.params
-
         const donation = await donationModel.findByIdAndDelete(donationId);
         if (!donation) {
             return res.status(404).json({ error: "Donation not found" });
@@ -382,7 +354,6 @@ exports.deleteDonationByAdmin = async (req, res) => {
     }
 };
  
-
 exports.makeCampaignInactive=async(req,res)=>{
     try {
         const {campaignId}=req.params
@@ -397,6 +368,7 @@ exports.makeCampaignInactive=async(req,res)=>{
         res.status(500).json({info:`unable to make campaign inactive because ${error}`})
     }
 }
+
 exports.makeCampaignActive=async(req,res)=>{
     try {
         const {campaignId}=req.params
@@ -411,7 +383,6 @@ exports.makeCampaignActive=async(req,res)=>{
         res.status(500).json({info:`unable to make campaign inactive because ${error}`})
     }
 }
-
 
 exports.getAllCampaign = async (req, res) => {
     try {
@@ -498,6 +469,7 @@ exports.deleteAllCampaign=async(req,res)=>{
 res.status(500).json({info:error.message})
     }
 }
+
 exports.deleteCampaignById=async(req,res)=>{
     try {
         const {campaignId}= req.params

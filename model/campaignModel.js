@@ -13,7 +13,7 @@ const campaignSchema = new mongoose.Schema({
     lastDonationDate: { type: Date },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     isSponsored: Boolean,
-    sponsoredAt: Date,
+    isponsoredAt: Date,
     individual: { type: mongoose.Schema.Types.ObjectId, ref: 'individual' },
     npo: { type: mongoose.Schema.Types.ObjectId, ref: 'npo' },
     donations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'donation' }], 

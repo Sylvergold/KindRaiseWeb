@@ -1,19 +1,20 @@
 const campaignModel = require("../model/campaignModel")
-const donationModel=require("../model/donationModel")
+const donationModel = require("../model/donationModel")
 const individualModel = require("../model/individualModel")
 const npoModel = require("../model/npoModel")
-const cloudinary=require("../utilis/cloudinary")
-const sendmail=require("../helpers/html")
+const cloudinary = require("../utilis/cloudinary")
+const sendmail = require("../helpers/html")
+
 exports.createCampaignByIndividual = async (req, res) => {
     try {
             console.log(req.user)
         const { title, subtitle, story, Goal,endDate  } = req.body;
-        const individualId= req.user.id;
+        const individualId = req.user.id;
 
         if (!title || !subtitle || !story || !Goal ||!endDate) {  
             return res.status(400).json({ info: 'All fields are required' });
         }
-        const user=await individualModel.findById(individualId)
+        const user = await individualModel.findById(individualId)
          
         if(!user){
             return res.status(404).json({info:`user with id not found`})
@@ -22,11 +23,11 @@ exports.createCampaignByIndividual = async (req, res) => {
             if(isNaN(parsedEndDate.getTime())){
                 return res.status(401).json({info:`invalid date format`})
             }
-        let campaignPhotoUrl=null
+        let campaignPhotoUrl = null
           if(req.file){
                try{
-                const uploadPhoto=await cloudinary.uploader.upload(req.file.path)
-                campaignPhotoUrl=uploadPhoto.url             
+                const uploadPhoto = await cloudinary.uploader.upload(req.file.path)
+                campaignPhotoUrl = uploadPhoto.url             
                }catch(error){
                  res.status(502).json({info:error.message})
                }
@@ -83,7 +84,6 @@ exports.getCampaignById = async (req, res) => {
     }
   };
   
-
 exports.getAllIndividualCampaigns = async (req, res) => {
     try {
         const individualId = req.user.id; 
@@ -150,7 +150,6 @@ exports.updateIndividualCampaign = async (req, res) => {
         return res.status(500).json({ error: `Server error: ${error.message}` });
     }
 };
-
 
 exports.deleteCampaign=async(req,res)=>{
     try {
